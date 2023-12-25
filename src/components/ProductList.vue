@@ -1,0 +1,20 @@
+<template>
+   <div>
+    <h3>Product List</h3>
+    {{ products.length }}
+   </div>
+</template>
+
+<script>
+export default {
+name: "product-list",
+props:{
+    products:Array
+}
+
+};
+</script>
+
+<style scoped>
+
+</style>
