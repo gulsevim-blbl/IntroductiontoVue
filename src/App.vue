@@ -20,24 +20,46 @@ export default {
   },
   data(){
     return{
-      products:[
-        {id:1,categoryId:1,productName:"Laptop",quantityPerUnit:'Acer Laptop',unitPrice:5000,unitsInStock: 2},
-        {id:2,categoryId:1,productName:"Mouse",quantityPerUnit:'Acer Mouse',unitPrice:5000,unitsInStock: 3},
-        {id:3,categoryId:2,productName:"Keyboard",quantityPerUnit:'Acer Keyboard',unitPrice:5000,unitsInStock: 20},
-      ]
+      products:[]
     }
   },
+  mounted(){ //  tüm html yani dom yerleştikten sonra çalış
+    this.getProducts()
+  },
   methods:{
-    deleteProduct(product){
+   async getProducts(){
+      const result = await fetch('http://localhost:3000/products')
+      const data = await result.json()
+      this.products = data;
+    },
+    async deleteProduct(product){
+      await fetch('http://localhost:3000/products/'+product.id,{
+        method:'DELETE'
+      })
+
         this.products =this.products.filter(
           productToFilter => productToFilter.id!==product.id
         )
     },
-    updatedProduct(){
+    async updatedProduct(product){
+      const result = await fetch('http://localhost:3000/products/' +product.id,{
+        method:'PUT',
+        body:JSON.stringify(product),
+        headers:{"Content-Type" : "application/json"}
+      })
 
+      const updateProduct = await result.json()
+
+      this.products = this.products.map(product => product.id===updateProduct.id?updateProduct:product)
     },
-    addProduct(product){
-      const newProduct = {...product}
+    async addProduct(product){
+      const result = await fetch('http://localhost:3000/products',{
+        method:'POST',
+        body:JSON.stringify(product),
+        headers:{"Content-Type" : "application/json"}
+      })
+
+      const newProduct = await result.json()
       this.products = [...this.products,newProduct]
     }
   }
